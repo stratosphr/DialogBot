@@ -123,6 +123,7 @@ dire
 diriger
 discuter
 disposer
+disparaître
 distinguer
 dominer
 donner

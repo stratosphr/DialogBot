@@ -24,8 +24,8 @@ $(document).ready(function(){
 		  if(new_message != ""){
 			   list_messages.push(new_message);
 
-			   $.get("PHP/functions.php", {data : new_message}, function(data){
-					var list_data = data.split(" ~ ");
+			   $.get("PHP/functions.php", {message : new_message}, function(data){
+					var list_data = data.split("~MESSAGE~");
 					var answer = list_data[0];
 					list_messages.push(answer);
 			   }).done(function(){
@@ -43,6 +43,7 @@ $(document).ready(function(){
 		  event.preventDefault();
 		  list_messages.splice(0, list_messages.length);
 		  refreshChat(list_messages);
+		  $("#input_message").val("");
 		  $("#input_message").focus();
 	 });
 
@@ -58,6 +59,9 @@ $(document).ready(function(){
 					list_messages.pop();
 					refreshChat(list_messages);
 			   }
+		  }else if(event.altKey && event.which == 76){
+			   event.preventDefault();
+			   $("#input_clear").click();
 		  }
 	 });
 

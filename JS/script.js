@@ -23,9 +23,17 @@ $(document).ready(function(){
 
 		  if(new_message != ""){
 			   list_messages.push(new_message);
-			   refreshChat(list_messages);
-			   chat.animate({scrollTop : chat[0].scrollHeight - chat.height()}, 300);
-			   $("#input_message").val("");
+
+			   $.get("PHP/functions.php", {data : new_message}, function(data){
+					var list_data = data.split(" ~ ");
+					var answer = list_data[0];
+					list_messages.push(answer);
+			   }).done(function(){
+					refreshChat(list_messages);
+					chat.animate({scrollTop : chat[0].scrollHeight - chat.height()}, 300);
+					$("#input_message").val("");
+			   });
+
 		  }
 		  $("#input_message").focus();
 

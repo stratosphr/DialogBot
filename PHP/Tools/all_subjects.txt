@@ -1,0 +1,6 @@
+USER je j me
+USERS nous on
+ME tu toi vous t te
+TIERS il elle Patrick lui Guillaume Ali Jean 
+TIERSES ils elles eux leur
+OTHERS

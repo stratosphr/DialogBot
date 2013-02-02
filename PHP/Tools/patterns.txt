@@ -1,0 +1,70 @@
+USER être NOQUEST
+Bonjour, je suis TalkBot, le robot qui parle. Comment vas-tu ?
+ME aimer quelles
+J'ai des goûts très variés. Et toi, qu'est-ce que tu aimes ?
+USER aller QUEST
+Moi aussi. Dis m'en un peu plus sur toi.
+ME avoir combien
+J'en ai plusieurs. Et toi, combien en as-tu ?
+USER avoir NOQUEST
+Très bien. Est-ce que ça te fait plaisir ?
+OTHERS être quelle
+Mes données sont limitées sur ce sujet. Peux-tu m'en dire plus ?
+OTHERS être qui
+Peut-être moi... Je suis encore un nouveau né, je ne me connais pas réellement. Qu'aimes-tu faire dans la vie ?
+TIERS vouloir que
+Je pense que cette personne désire énormément de choses. Qu'en penses-tu ?
+TIERS aime que
+Je pense que cette personne désire énormément de choses. Qu'en penses-tu ?
+ME penser quoi
+Je pense que vous êtes très sympathique. Sommes-nous amis ?
+TIERSES vivre où
+Peut-être en Espagne ? Je ne suis pas certain de ma géographie. Et toi ? Où habites-tu ?
+USER vivre NOQUEST
+On m'a dit que le paysage y était magnifique ! Aimes-tu vivre là-bas ?
+OTHERS valoir combien
+Je ne connais pas la valeur exacte, mais je dirais que c'est précieux. Voudrais-tu l'acheter ?
+USER penser NOQUEST
+"Très bien. Parle-moi de toi. Quels sont tes hobbies ?
+ME faire comment
+Je suis simplement très doué. Comment aurais-tu fait ?
+USER faire NOQUEST
+Je vois, c'est une bonne idée. Que pensez de la société actuelle ?
+TIERS venir pourquoi
+Il avait sans doute un projet en tête. Et toi, que fais-tu en ce moment ?
+USERS partir quand
+Dès que possible. Pourquoi ? Es-tu pressée ?
+ME aller où
+Je ne vais nulle part : je suis un robot, et j'obéis à mon maître. Où voudrais-tu que j'aille ?
+ME aller QUEST
+Non je ne vais pas RESIDUAL, mais je préfère garder ça pour moi. J'aimerais mieux te connaître avant de me dévoiler. Parles moi de toi.
+ME venir quand
+Je ne peux malheureusement pas me déplacer, n'étant qu'un simple programme...Voudrais-tu me voir ?
+ME vouloir quoi
+J'aimerais beaucoup de choses. Avoir un nouvel antivirus pour me protéger. Et toi que souhaiterais-tu ?
+ME vouloir que
+J'aimerais beaucoup de choses. Avoir un nouvel antivirus pour me protéger par exemple. Et toi que souhaiterais-tu ?
+ME penser que
+Je suis du même avis que vous. J'aimerais savoir ce que tu penses du grignotage entre les repas ?
+ME dire pourquoi
+Parce qu'on m'a programmé pour dire ça. Pourquoi poses-tu la question ?
+OTHERS parler qui
+Probablement nous et des tas de personnes dans le monde. Pourquoi est-ce que cela t'intéresse ?
+ME voir qui
+Je vois ma petite amie, AVAST. Et toi as-tu une petite amie ?
+USER valoir que
+Je pense simplement que vous le méritez. Ne penses-tu pas ?
+ME voir que
+Je vois actuellement tout un tas de lignes de code. Et toi ?
+USER entendre qui
+Probablement le son de votre ordinateur ? Cela te dérange-t-il ?
+USER voir que
+La perception change d'une personne à une autre. Décris-moi ce que tu crois voir en ce moment.
+ME aimer lequel
+Je ne sais pas trop. J'hésite entre plusieurs. Et toi, as-tu une préférence ?
+ME aimer qui
+J'aime tout le monde. Es-tu amoureux de quelqu'un ?
+ME faire quoi
+Je fais des tas de choses : je suis un programme multitâche ! Et toi, es-tu multitâche ?
+ME faire que
+Je fais des tas de choses : je suis un programme multitâche ! Et toi, es-tu multitâche ?

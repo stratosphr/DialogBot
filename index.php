@@ -2,11 +2,11 @@
 <html>
 
 <head>
+	<meta charset="UTF-8"/>
 	<title>DialogBot v1.0</title>
 	<script src="JS/jquery.js"></script>
 	<!--<meta http-equiv="refresh" content="0.3">-->
 	<link rel="stylesheet" type="text/css" href="CSS/style.css">
-	<meta charset="UTF-8"/>
 </head>
 
 <body>

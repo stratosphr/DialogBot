@@ -20,10 +20,10 @@
 			 <input id="input_message" type="text"/>
 			 <input id="input_submit" type="submit" value="Send"/>
 		</div>
-		<fieldset>
+		<fieldset id="fieldset_options">
 		<legend>Options</legend>
 				<div class="field">
-						<input id="input_use_spellchecker" type="checkbox" value="use_spellchecker">
+						<input checked="checked" id="input_use_spellchecker" type="checkbox" value="use_spellchecker">
 						<label for="input_use_spellchecker">Use spellchecker</label>
 				</div>
 				<div class="field">
@@ -35,12 +35,12 @@
 						<label for="input_display_subjects">Display subjects data</label>
 				</div>
 				<div class="field">
-						<input id="input_display_questions" type="checkbox" value="display_question"/>
+						<input id="input_display_questions" type="checkbox" value="display_questions"/>
 						<label for="input_display_questions">Display questions data</label>
 				</div>
 				<div class="field">
-						<input id="input_display_negation" type="checkbox" value="display_negation"/>
-						<label for="input_display_negation">Display negations data</label>
+						<input id="input_display_negations" type="checkbox" value="display_negations"/>
+						<label for="input_display_negations">Display negations data</label>
 				</div>
 		</fieldset>
 		<input id="input_clear" type="button" value="Clear chat"/>

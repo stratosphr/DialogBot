@@ -139,18 +139,6 @@ function getSUBJECTS($message){
  * Main function that returns all known data
  * about the message to the ajax function
  */
-if(isset($_GET['message']) && !empty($_GET['message'])){
-	 $message = spellCheck($_GET['message']);
-
-	 echo $message . "~";
-
-	 $subjects_to_string = '';
-	 if($subjects = getSUBJECTS($message)){
-		  foreach($subjects as $subject)
-			   $subjects_to_string .= $subject . "|";
-	 }
-	 echo $subjects_to_string . "~";
-
 	 /*TODO : ASSERT IS QUESTION BEFORE THE REST : we must modify "vais je parler" by "je vais parler QUEST"
 	 /*TODO : PROBLEM WITH "je te demande" : subject will be "te" and should be "je". Try to replace with : "je demande à toi*/
 	 /*TODO : HANDLING "je veux simplement aider" : subject is not found because of adverb simplement*/
@@ -159,12 +147,31 @@ if(isset($_GET['message']) && !empty($_GET['message'])){
 	 /*TODO : REMOVE NOUNS FROM MESSAGE: "je laisse la place" could result on "laisser placer"*/
 	 /*TODO : REMOVE SUBJECTS FROM MESSAGE ! : "tu me suis" could result on "taire être suivre" */
 
+if(
+	 isset($_GET['message']) && !empty($_GET['message']) &&
+	 isset($_GET['use_spellchecker']) && !empty($_GET['use_spellchecker']) &&
+	 isset($_GET['display_verbs']) && !empty($_GET['display_verbs']) &&
+	 isset($_GET['display_subjects']) && !empty($_GET['display_subjects']) &&
+	 isset($_GET['display_questions']) && !empty($_GET['display_questions']) &&
+	 isset($_GET['display_negations']) && !empty($_GET['display_negations'])
+){
+	 $message = ($_GET['use_spellchecker'] == 'true')?spellCheck($_GET['message']):$_GET['message'];
+
+	 echo $message . "~";
+
+	 $subjects_to_string = '';
+	 if($subjects = getSUBJECTS($message)){
+		  foreach($subjects as $subject)
+			   $subjects_to_string .= "|" . $subject . "|";
+	 }
+	 if($_GET['display_subjects'] == 'true') echo $subjects_to_string . "~";
+
 	 $verbs_to_string = '';
 	 if($verbs = getVERBS($message)){
 		  foreach($verbs as $verb)
-			   $verbs_to_string .= $verb[1] . " => " . $verb[0] . "|";
+			   $verbs_to_string .= "|" . $verb[1] . " => " . $verb[0] . "|";
 	 }
-	 echo $verbs_to_string . "~";
+	 if($_GET['display_verbs'] == 'true') echo $verbs_to_string . "~";
 
 }
 

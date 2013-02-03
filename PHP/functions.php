@@ -18,6 +18,17 @@ function isKnownWord($word){
 	 return false;
 }
 
+function isVerb($verb){
+	 if(is_string($verb)){
+		  $conjugations = file('Data/verbs_conjugations.txt');
+		  foreach($conjugations as $conjugation){
+			   $conjugated_verbs = explode(' ', $conjugation);
+			   if(in_array($verb, $conjugated_verbs)) return true;
+		  }
+	 }
+	 return false;
+}
+
 function getVerbTemplate($verb){
 	 if(isKnownVerb($verb)){
 		  $dom = new DomDocument();
@@ -95,7 +106,7 @@ function spellCheck($message){
 			   foreach($known_words as $known_word){
 					$metaphone = levenshtein(metaphone($word), metaphone($known_word), 0, 0, 1);
 					similar_text('a'.$word.'a', 'a'.$known_word.'a', $percentage);
-					$levenshtein = levenshtein($word, $known_word, 0, 1, 1);
+					$levenshtein = levenshtein($word, $known_word, 2, 1, 1);
 					if($metaphone == 0 && $percentage >= 75 && $levenshtein < 4){
 						 if($percentage > $best_percentage){
 							  $corrected = true;
@@ -114,6 +125,16 @@ function spellCheck($message){
 	 return implode(' ', $correction);
 }
 
+function getSUBJECTS($message){
+	 $words = explode(' ', $message);
+	 $subjects = false;
+	 foreach($words as $key => $word){
+		  if($key != 0 && isVerb($word) && !isVerb($words[$key - 1])) $subjects[] = $words[$key - 1];
+		  else if($key == 0 && isVerb($word) && isset($words[$key + 1])) $subjects[] = $words[$key + 1];
+	 }
+	 return $subjects;
+}
+
 /*
  * Main function that returns all known data
  * about the message to the ajax function
@@ -123,9 +144,21 @@ if(isset($_GET['message']) && !empty($_GET['message'])){
 
 	 echo $message . "~";
 
-	 /*TODO : REMOVE NOUNS FROM MESSAGE: "je laisse la place" could result on "laisser placer"
+	 $subjects_to_string = '';
+	 if($subjects = getSUBJECTS($message)){
+		  foreach($subjects as $subject)
+			   $subjects_to_string .= $subject . "|";
+	 }
+	 echo $subjects_to_string . "~";
+
+	 /*TODO : ASSERT IS QUESTION BEFORE THE REST : we must modify "vais je parler" by "je vais parler QUEST"
+	 /*TODO : PROBLEM WITH "je te demande" : subject will be "te" and should be "je". Try to replace with : "je demande à toi*/
+	 /*TODO : HANDLING "je veux simplement aider" : subject is not found because of adverb simplement*/
+	 /*TODO : HANDLING "ne ... pas", "n'... pas" = NEGATION */
+	 /*TODO : HANDLING "rien qu'", "rien que", "ne ... que" = uniquement*/
+	 /*TODO : REMOVE NOUNS FROM MESSAGE: "je laisse la place" could result on "laisser placer"*/
 	 /*TODO : REMOVE SUBJECTS FROM MESSAGE ! : "tu me suis" could result on "taire être suivre" */
-	 
+
 	 $verbs_to_string = '';
 	 if($verbs = getVERBS($message)){
 		  foreach($verbs as $verb)

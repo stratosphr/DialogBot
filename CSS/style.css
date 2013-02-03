@@ -1,3 +1,44 @@
+body{
+	 background-image: url('Images/background.jpg');
+	 color: #FEFEFE;
+	 font-family: monospace;
+}
+
+form, h1{
+	 width: 900px;
+	 margin: auto;
+	 text-align: center;
+}
+
+fieldset{
+	 width: 700px;
+	 margin: auto;
+	 text-align: left;
+}
+
+#textarea_chat{
+	 width: 800px;
+	 height: 300px;
+}
+
+#input_message{
+	 border: solid thin #FEFEFE;
+	 height: 25px;
+	 font-size: 20px;
+	 padding: 8px;
+	 width: 670px;
+}#input_message:focus{
+	 -moz-box-shadow:0px 0px 5px 1px #34cdf9;
+	 -webkit-box-shadow:0px 0px 5px 1px #34cdf9;
+	 box-shadow:0px 0px 5px 1px #34cdf9;
+}
+
+.field{
+	 display: block;
+	 margin-top: 5px;
+	 margin-bottom: 5px;
+}
+
 #input_submit {
 	-moz-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #c1ed9c;

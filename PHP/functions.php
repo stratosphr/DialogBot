@@ -5,8 +5,15 @@ set_time_limit(0);
 function isKnownVerb($verb){
 	 if(is_string($verb)){
 		  $known_verbs = file('Data/verbs.txt', FILE_IGNORE_NEW_LINES);
-		  foreach($known_verbs as $known_verb)
-			   if($known_verb == $verb) return true;
+		  return in_array($verb, $known_verbs);
+	 }
+	 return false;
+}
+
+function isKnownWord($word){
+	 if(is_string($word)){
+		  $known_words = file('Data/known_words.txt', FILE_IGNORE_NEW_LINES);
+		  return in_array($word, $known_words);
 	 }
 	 return false;
 }
@@ -74,16 +81,57 @@ function getVERBS($message){
 	 return $verbs;
 }
 
+function spellCheck($message){
+	 $known_words = file('Data/known_words.txt', FILE_IGNORE_NEW_LINES);
+	 $words = explode(' ', $message);
+	 $check = "";
+	 $correction = array();
+	 $corrected = false;
+	 $best_percentage = 0;
+	 $best_correction = false;
+	 foreach($words as $word){
+		  if(isKnownWord($word)) $correction[] = $word;
+		  else{
+			   foreach($known_words as $known_word){
+					$metaphone = levenshtein(metaphone($word), metaphone($known_word), 0, 0, 1);
+					similar_text('a'.$word.'a', 'a'.$known_word.'a', $percentage);
+					$levenshtein = levenshtein($word, $known_word, 0, 1, 1);
+					if($metaphone == 0 && $percentage >= 75 && $levenshtein < 4){
+						 if($percentage > $best_percentage){
+							  $corrected = true;
+							  $best_correction = $known_word;
+							  $best_percentage = $percentage;
+						 }
+					}
+			   }
+			   if(!$corrected) $correction[] = $word;
+			   else $correction[] = $best_correction;
+			   $corrected = false;
+			   $best_correction = '';
+			   $best_percentage = '';
+		  }
+	 }
+	 return implode(' ', $correction);
+}
+
+/*
+ * Main function that returns all known data
+ * about the message to the ajax function
+ */
 if(isset($_GET['message']) && !empty($_GET['message'])){
-	 $message = $_GET['message'];
-	 echo "~MESSAGE~" . "bonjour~MESSAGE~";
+	 $message = spellCheck($_GET['message']);
 
+	 echo $message . "~";
+
+	 /*TODO : REMOVE NOUNS FROM MESSAGE: "je laisse la place" could result on "laisser placer"
 	 /*TODO : REMOVE SUBJECTS FROM MESSAGE ! : "tu me suis" could result on "taire être suivre" */
-
+	 
+	 $verbs_to_string = '';
 	 if($verbs = getVERBS($message)){
 		  foreach($verbs as $verb)
-			   foreach($verb as $infinitive) echo $infinitive;
+			   $verbs_to_string .= $verb[1] . " => " . $verb[0] . "|";
 	 }
+	 echo $verbs_to_string . "~";
 
 }
 

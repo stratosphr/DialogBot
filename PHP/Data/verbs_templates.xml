@@ -257,6 +257,8 @@ env LANG=en_US.utf8 sort -f
 	 <v><i>joindre</i><t>crai:ndre</t></v>
 	 <v><i>jouer</i><t>aim:er</t></v>
 	 <v><i>juger</i><t>man:ger</t></v>
+	 <v><i>laisser</i><t>aim:er</t></v>
+	 <v><i>lancer</i><t>pla:cer</t></v>
 	 <v><i>lever</i><t>l:ever</t></v>
 	 <v><i>lier</i><t>aim:er</t></v>
 	 <v><i>lire</i><t>l:ire</t></v>

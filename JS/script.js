@@ -19,15 +19,15 @@ $(document).ready(function(){
 		  event.preventDefault();
 
 		  var chat = $("#textarea_chat");
-		  var new_message = $("#input_message").val();
+		  var new_message = $("#input_message").val().replace(/^[ ]+/, "").replace(/[ ][ ]+/g, " ").replace(/[ ]*$/, "");
 
 		  if(new_message != ""){
 			   list_messages.push(new_message);
 
 			   $.get("PHP/functions.php", {message : new_message}, function(data){
-					var list_data = data.split("~MESSAGE~");
-					var answer = list_data[0];
-					list_messages.push(answer);
+					var answer = data.split("~")[0];
+					var verbs = data.split("~")[1];
+					list_messages.push(answer + " ~ " + verbs);
 			   }).done(function(){
 					refreshChat(list_messages);
 					chat.animate({scrollTop : chat[0].scrollHeight - chat.height()}, 300);

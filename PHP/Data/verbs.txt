@@ -219,6 +219,8 @@ jeter
 joindre
 jouer
 juger
+laisser
+lancer
 lever
 lier
 lire

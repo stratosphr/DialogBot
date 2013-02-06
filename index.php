@@ -27,22 +27,28 @@
 						<label for="input_use_spellchecker">Use spellchecker</label>
 				</div>
 				<div class="field">
-						<input id="input_display_verbs" type="checkbox" value="display_verbs"/>
+						<label for="input_add_words_to_dictionary">Add words to dictionary : </label>
+			 			<input id="input_add_words_to_dictionary" type="text"/>
+						<input id="input_add_words" type="submit" value="Add words"/>
+				</div>
+				<div class="field">
+						<input checked="checked" id="input_display_verbs" type="checkbox" value="display_verbs"/>
 						<label for="input_display_verbs">Display verbs data</label>
 				</div>
 				<div class="field">
-						<input id="input_display_subjects" type="checkbox" value="display_subjects"/>
+						<input checked="checked" id="input_display_subjects" type="checkbox" value="display_subjects"/>
 						<label for="input_display_subjects">Display subjects data</label>
 				</div>
 				<div class="field">
-						<input id="input_display_questions" type="checkbox" value="display_questions"/>
+						<input checked="checked" id="input_display_questions" type="checkbox" value="display_questions"/>
 						<label for="input_display_questions">Display questions data</label>
 				</div>
 				<div class="field">
-						<input id="input_display_negations" type="checkbox" value="display_negations"/>
+						<input checked="checked" id="input_display_negations" type="checkbox" value="display_negations"/>
 						<label for="input_display_negations">Display negations data</label>
 				</div>
 		</fieldset>
+
 		<input id="input_clear" type="button" value="Clear chat"/>
 		<input id="input_reset_bot" type="button" value="Reset bot"/>
 	</form>

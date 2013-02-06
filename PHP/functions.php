@@ -125,7 +125,7 @@ function spellCheck($message){
 	 return implode(' ', $correction);
 }
 
-function getSUBJECTS($message){
+/*function getSUBJECTS($message){
 	 $words = explode(' ', $message);
 	 $subjects = false;
 	 foreach($words as $key => $word){
@@ -133,6 +133,54 @@ function getSUBJECTS($message){
 		  else if($key == 0 && isVerb($word) && isset($words[$key + 1])) $subjects[] = $words[$key + 1];
 	 }
 	 return $subjects;
+}*/
+
+function getSUBJECT($message){
+	 $words = explode(' ', $message);
+	 $subject = false;
+	 foreach($words as $key => $word){
+		  if($key == 0 && isVerb($word) && isset($words[$key + 1])) return $words[$key + 1];
+		  else if(!isVerb($word)) $subject .= $word . ' ';
+		  else return substr($subject, 0, -1);
+	 }
+	 if($subject) return substr($subject, 0, -1);
+	 else return $subject;
+}
+
+/*function getINDIRECT_OBJECTS($message){
+	 $prepositions = file('Data/prepositions.txt', FILE_IGNORE_NEW_LINES);
+	 $conjunctions = file('Data/conjunctions.txt', FILE_IGNORE_NEW_LINES);
+	 $words = explode(' ', $message);
+	 $indirect_object_indexes = array();
+	 $indirect_objects = array();
+	 $index = 0;
+	 foreach($words as $key => $word){
+		  if(in_array($word, $prepositions)) $indirect_object_indexes[] = $key;
+		  else if(in_array($word, $conjunctions)) $indirect_object_indexes[] = $key;
+	 }
+	 foreach($indirect_object_indexes as $key => $indirect_object_index){
+		  $indirect_objects[$index] = '';
+		  if(isset($indirect_object_indexes[$key + 1])){
+			   for($i=$indirect_object_index; $i<$indirect_object_indexes[$key + 1] - 1; $i++)
+					$indirect_objects[$index] .= $words[$i] . ' ';
+				$indirect_objects[$index] .= $words[$indirect_object_indexes[$key + 1] - 1];
+		  }
+		  else{
+			   for($i=$indirect_object_index; $i<count($words) - 1; $i++)
+					$indirect_objects[$index] .= $words[$i] . ' ';
+			   $indirect_objects[$index] .= $words[count($words) - 1];
+		  }
+		  $index++;
+	 }
+	 foreach($indirect_objects as $key => $indirect_object){
+		  if(in_array($indirect_object, $conjunctions)) unset($indirect_objects[$key]);
+	 }
+	 $indirect_objects = array_values($indirect_objects);
+	 return $indirect_objects;
+}*/
+
+function getINDIRECT_OBJECTS($message){
+	 return array();
 }
 
 /*
@@ -159,13 +207,6 @@ if(
 
 	 echo $message . "~";
 
-	 $subjects_to_string = '';
-	 if($subjects = getSUBJECTS($message)){
-		  foreach($subjects as $subject)
-			   $subjects_to_string .= "|" . $subject . "|";
-	 }
-	 if($_GET['display_subjects'] == 'true') echo $subjects_to_string . "~";
-
 	 $verbs_to_string = '';
 	 if($verbs = getVERBS($message)){
 		  foreach($verbs as $verb)
@@ -173,6 +214,27 @@ if(
 	 }
 	 if($_GET['display_verbs'] == 'true') echo $verbs_to_string . "~";
 
+	 //TODO : REMOVE NEGATIONS BEFORE GETTING SUbJECTS : 'Ne voudrais tu pas ...' should return tu !
+	 //TODO : IDEM FOR QUESTIONS : 'Comment veux tu' should return tu !
+	 //TODO : IDEM FOR QUESTIONS : 'Comment est-ce que tu veux' should return tu !
+	 //TODO : HANDLE 'souhaite t il que' !!!!!
+
+	 if($_GET['display_subjects'] == 'true' && $subject = getSUBJECT($message)) echo $subject . "~";
+
+	 $indirect_objects_to_string = '';
+	 if($indirect_objects = getINDIRECT_OBJECTS($message)){
+		  foreach($indirect_objects as $indirect_object)
+			   $indirect_objects_to_string .= "|" . $indirect_object . "|";
+	 }
+	 echo $indirect_objects_to_string . "~";
+
+}else if(isset($_GET['add_words']) && !empty($_GET['add_words'])){
+	 $words = explode(' ', $_GET['add_words']);
+	 $known_words = file('Data/known_words.txt', FILE_IGNORE_NEW_LINES);
+	 foreach($words as $word){
+		  if(!in_array($word, $known_words))
+			   file_put_contents('Data/known_words.txt', $word . PHP_EOL, FILE_APPEND);
+	 }
 }
 
 ?>

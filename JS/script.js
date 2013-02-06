@@ -14,7 +14,6 @@ $(document).ready(function(){
 
 	 $("#input_message").focus();
 
-
 	 $("#input_submit").click(function(event){
 		  event.preventDefault();
 
@@ -54,8 +53,18 @@ $(document).ready(function(){
 
 	 });
 
-	 $("#fieldset_options").click(function(event){
+	 $("#input_add_words").click(function(event){
+		  event.preventDefault();
+		  var clean_add_words = $("#input_add_words_to_dictionary").val().replace(/^[ ]+/, "").replace(/[ ][ ]+/g, " ").replace(/[ ]*$/, "");
+		  $.get("PHP/functions.php", {
+			   add_words : clean_add_words
+		  });
+		  $("#input_add_words_to_dictionary").val("");
 		  $("#input_message").focus();
+	 });
+
+	 $("#fieldset_options").click(function(event){
+		  if(event.target.id != 'input_add_words_to_dictionary') $("#input_message").focus();
 	 });
 
 	 $("#input_clear").click(function(event){

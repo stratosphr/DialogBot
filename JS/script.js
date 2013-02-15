@@ -8,6 +8,12 @@ function refreshChat(list_messages){
 	 }
 }
 
+if(typeof String.prototype.startsWith != 'function'){
+	 String.prototype.startsWith = function(str){
+		  return this.lastIndexOf(str, 0) === 0;
+	 }
+}
+
 $(document).ready(function(){
 
 	 var list_messages = new Array();
@@ -36,12 +42,20 @@ $(document).ready(function(){
 					display_questions : display_questions, 
 					display_negations : display_negations
 			   }, function(data){
-					var answer = (data.split("~")[0] == undefined)?"":data.split("~")[0];
-					var verbs = (data.split("~")[1] == undefined)?"":data.split("~")[1];
-					var subjects = (data.split("~")[2] == undefined)?"":data.split("~")[2];
-					var questions = (data.split("~")[3] == undefined)?"":data.split("~")[3];
-					var negations = (data.split("~")[4] == undefined)?"":data.split("~")[4];
-					list_messages.push(answer + " ~ " + verbs + " ~ " + subjects + " ~ " + questions + " ~ " + negations);
+					var analyze = data.split("#");
+					var answer;
+					var verbs;
+					var subjects;
+					var questions;
+					var negations;
+					for(i=0; i<analyze.length; i++){
+						 if(analyze[i].startsWith('answer')) answer = analyze[i].substring(7);
+						 else if(analyze[i].startsWith('verbs')) verbs = analyze[i].substring(6);
+						 else if(analyze[i].startsWith('subjects')) subjects = analyze[i].substring(9);
+						 else if(analyze[i].startsWith('questions')) questions = analyze[i].substring(10);
+						 else if(analyze[i].startsWith('negations')) negations = analyze[i].substring(10);
+					}
+					list_messages.push(answer + " # " + verbs + " # " + subjects + " # " + questions + " # " + negations);
 			   }).done(function(){
 					refreshChat(list_messages);
 					chat.animate({scrollTop : chat[0].scrollHeight - chat.height()}, 300);

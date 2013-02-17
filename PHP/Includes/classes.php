@@ -21,11 +21,34 @@ class MessageAnalyzer{
 		  foreach($this->getSubjects() as $subject) $to_string .= ' '.$subject[0].' => '.$subject[1].' |';
 		  $to_string .= '#';
 		  $to_string .= 'question: '.$this->getQuestion().' #';
+		  $to_string .= 'negation: '.$this->getNegation().' #';
 		  return $to_string;
 	 }
 
 	 public function getAnswer(){
-		  return 'this is my answer';
+		  return $this->message;
+	 }
+
+	 public function getNegation(){
+		  $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+		  $verbs = $this->getVerbs();
+		  $words = explode(' ', $this->message);
+		  $negation = 'NOT_NEGATION';
+		  $index_DISCORDANTIAL = -1;
+		  $index_FORCLUSIVE = -1;
+		  $index_VERB = -1;
+		  foreach($words as $key=>$word){
+			   if($word == 'ne') $index_DISCORDANTIAL = $key;
+			   else if(in_array($word, $negative_words)) $index_FORCLUSIVE = $key;
+			   else{
+					foreach($verbs as $verb)
+						 if($word == $verb[1]) $index_VERB = $key;
+			   }
+			   if($index_DISCORDANTIAL != -1 && $index_FORCLUSIVE != -1 && $index_VERB != -1){
+					if($index_DISCORDANTIAL < $index_VERB) $negation = 'NEGATION';
+			   }
+		  }
+		  return $negation;
 	 }
 
 	 public function getMessage(){
@@ -39,7 +62,7 @@ class MessageAnalyzer{
 		  $first_subject = (isset($this->getSubjects()[0][1])) ? $this->getSubjects()[0][1] : null;
 
 		  // Testing patterns 'est ce que .*' and '.* ?'
-		  $question = (startsWith($this->message, 'est ce que') || endsWith($this->message, '?')) ? 'QUESTION' : 'NOT_QUESTION';
+		  $question = endsWith('?', $this->message) ? 'QUESTION' : 'NOT_QUESTION';
 
 		  // Testing pattern '.* VERB SUBJECT .*'
 		  $verb_found = false;
@@ -61,10 +84,84 @@ class MessageAnalyzer{
 	 }
 
 	 public function getSubjects(){
-		  $subjects = array();
-		  $subjects[] = array('USER', 'je');
-		  $subjects[] = array('USER', 'on');
-		  return $subjects;
+		  $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+		  $found_subjects = array();
+		  $verbs = $this->getVerbs();
+		  $words = explode(' ', $this->message);
+		  
+		  //Removing negations and adjectives
+		  foreach($words as $key => $word){
+			   if($word == 'ne' || in_array($word, $negative_words)){
+					unset($words[$key]);
+					array_values($words);
+					print_r($words); echo '<br />';
+			   }
+		  }
+
+		  if(count($words > 0)){
+			   $interrogative_words = file(DATA_INTERROGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+			   $subjects = file(DATA_SUBJECTS, FILE_IGNORE_NEW_LINES);
+
+			   // Testing pattern 'QUESTION VERB SUBJECT .*'
+			   if(in_array($words[0], $interrogative_words)){
+					if(isset($words[1]) && isset($words[2])){
+						 $verb_found = false;
+						 foreach($verbs as $verb)
+							  if($words[1] == $verb[1]) $verb_found = true;
+						 if($verb_found){
+							  foreach($subjects as $line){
+								   $subjects_xtalk = explode(' ', $line);
+								   if(in_array($words[2], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[2]);
+							  }
+						 }
+					}
+			   }
+
+			   // Testing pattern 'QUESTION SUBJECT VERB .*'
+			   if(in_array($words[0], $interrogative_words)){
+					if(isset($words[1]) && isset($words[2])){
+						 $verb_found = false;
+						 foreach($verbs as $verb)
+							  if($words[2] == $verb[1]) $verb_found = true;
+						 if($verb_found){
+							  foreach($subjects as $line){
+								   $subjects_xtalk = explode(' ', $line);
+								   if(in_array($words[1], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[1]);
+							  }
+						 }
+					}
+			   }
+
+			   // Testing pattern 'SUBJECT VERB .*'
+			   if(isset($words[1])){
+					$verb_found = false;
+					foreach($verbs as $verb)
+						 if($words[1] == $verb[1]) $verb_found = true;
+					if($verb_found){
+						 foreach($subjects as $line){
+							  $subjects_xtalk = explode(' ', $line);
+							  if(in_array($words[0], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[0]);
+						 }
+					}
+			   }
+
+			   // Testing pattern 'VERB SUBJECT .*'
+			   if(isset($words[1])){
+					$verb_found = false;
+					foreach($verbs as $verb)
+						 if($words[0] == $verb[1]) $verb_found = true;
+					if($verb_found){
+						 foreach($subjects as $line){
+							  $subjects_xtalk = explode(' ', $line);
+							  if(in_array($words[1], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[1]);
+						 }
+					}
+			   }
+		  }
+
+		  if(count($found_subjects) == 0) $found_subjects[] = array('OTHER', 'OTHER');
+
+		  return $found_subjects;
 	 }
 
 	 public function getUseSpellchecker(){
@@ -108,7 +205,8 @@ class MessageAnalyzer{
 		  $message = preg_replace(array('#\bt( |-)+(il|elle|on|ils|elles)\b#'), array(' $2'), $message);
 		  $message = str_replace('-', ' ', $message); // Dashes
 		  $message = str_replace('\'', ' ', $message); // Single quotes
-		  $message = preg_replace(array('#\bc\b#', '#\bd\b#', '#\bj\b#', '#\bl\b#', '#\bm\b#', '#\bn\b#', '#\bqu\b#', '#\bs\b#', '#\bt\b#'), array('cela', 'de', 'je', 'le', 'me', 'ne', 'que', 'se', 'te'), $message); // Contractions
+		  $message = preg_replace(array('#([[:blank:]]+|^)c([[:blank:]]+|$)#', '#([[:blank:]]+|^)d([[:blank:]]+|$)#', '#([[:blank:]]+|^)j([[:blank:]]+|$)#', '#([[:blank:]]+|^)l([[:blank:]]+|$)#', '#([[:blank:]]+|^)m([[:blank:]]+|$)#', '#([[:blank:]]+|^)n([[:blank:]]+|$)#', '#([[:blank:]]+|^)qu([[:blank:]]+|$)#', '#([[:blank:]]+|^)s([[:blank:]]+|$)#', '#([[:blank:]]+|^)t([[:blank:]]+|$)#'), array(' cela ', ' de ', ' je ', ' le ', ' me ', ' ne ', ' que ', ' se ', ' te '), $message); // Contractions
+		  $message = str_replace('est ce que', '__est_ce_que__', $message);
 		  echo 'Normalized : #'.$message.'#<br />';
 		  return $message;
 	 }

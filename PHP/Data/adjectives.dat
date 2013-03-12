@@ -1,5 +1,3 @@
-APPARENCE être paraître sembler penser trouver juger (avoir l'air) rester
-
 adorable +++
 attrayant ++
 attrayants ++
@@ -11,7 +9,7 @@ séduisante ++
 séduisantes ++
 beau +++
 bel +++
-beaux
+beaux +++
 belle +++
 belles +++
 rustre ---
@@ -31,6 +29,12 @@ maladroit -
 maladroits -
 maladroite -
 maladroites -
+maligne ++
+malignes ++
+malin ++
+maline ++
+malines ++
+malins ++
 terne --
 ternes --
 dynamique +
@@ -64,6 +68,8 @@ gai +
 gais +
 gaie +
 gaies +
+bien ++
+biens ++
 bienveillant +
 bienveillants +
 bienveillante +
@@ -130,9 +136,15 @@ moches ---
 affreux ----
 affreuse ----
 affreuses ----
-
-PERSONNALITE être paraître sembler penser trouver juger (avoir l'air) rester
-
+intelligent +++
+intelligents +++
+intelligente +++
+intelligentes +++
+gros --
+grosse --
+grosses --
+obaise ---
+obaises ---
 agressif --
 agressifs --
 agressive --
@@ -187,7 +199,6 @@ déterminée ++
 déterminées ++
 désagréable --
 désagréables --
-mal --
 franc ++
 francs ++
 franche ++
@@ -197,10 +208,10 @@ intrépides +
 généreux ++
 généreuse ++
 généreuses ++
-génial
-géniaux
-géniale
-géniales
+génial +++
+géniaux +++
+géniale +++
+géniales +++
 doué ++
 doués ++
 douée ++
@@ -289,9 +300,6 @@ folle ---
 folles ---
 absurde ---
 absurdes ---
-
-SENTIMENTS avoir être paraître sembler penser trouver juger (avoir l'air) rester
-
 peur ---
 peurs ---
 en colère ---
@@ -314,6 +322,10 @@ calmes ++
 confus -
 confuse -
 confuses -
+fort ++
+forts ++
+forte ++
+fortes ++
 confortable ++
 confortables ++
 terrifiant ---
@@ -360,8 +372,8 @@ bon +++
 bons +++
 bonne +++
 bonnes +++
-horrible ---
-horribles ---
+horrible ----
+horribles ----
 heureux ++
 heureuse ++
 heureuses ++
@@ -399,6 +411,12 @@ idiot --
 idiots --
 idiote --
 idiotes --
+stupide ---
+stupides ---
+crétin ---
+crétine ---
+imbécile ---
+imbéciles ---
 sombre --
 sombres --
 douloureux ---
@@ -424,76 +442,68 @@ méchantes ---
 las --
 lasse --
 lasses --
-mal --
 plein d'entrain ++
 pleins d'entrain ++
 pleine d'entrain ++
 pleines d'entrain ++
-
-TAILLE être paraître sembler penser trouver juger (avoir l'air) rester
-
-grand
-grands
-grande
-grandes
-colossal
-colossaux
-colossale
-colossales
-gigantesque
-gigantesques
-énorme
-énormes
-maigre
-maigres
-miniature
-miniatures
-haut
-hauts
-haute
-hautes
-mince
-minces
-minuscule
-minuscules
-
-TEMPS être paraître sembler penser trouver juger (avoir l'air) rester
-
-antique
-antiques
-annuel
-annuels
-annuelle
-annuelles
-bref
-brefs
-brêve
-brêves
-tôt
-rapide
-rapides
-tard
-tardif
-tardifs
-tardive
-tardives
-moderne
-modernes
-vieux
-vieille
-vieil
-vieilles
-rapide
-rapides
-ralenti
-ralentis
-ralentie
-ralenties
-jeune
-jeunes
-
-QUANTITE être paraître sembler penser trouver juger (avoir l'air) rester
-
+grand =
+grands =
+grande =
+grandes =
+petit =
+petits =
+petite =
+petites =
+colossal =
+colossaux =
+colossale =
+colossales =
+gigantesque =
+gigantesques =
+énorme =
+énormes =
+maigre -
+maigres -
+miniature =
+miniatures =
+haut =
+hauts =
+haute =
+hautes =
+mince +
+minces +
+minuscule =
+minuscules =
+antique =
+antiques =
+annuel =
+annuels =
+annuelle =
+annuelles =
+bref =
+brefs =
+brêve =
+brêves =
+tôt =
+rapide +
+rapides +
+tard -
+tardif -
+tardifs -
+tardive -
+tardives -
+moderne +
+modernes +
+vieux -
+vieille -
+vieil -
+vieilles -
+ralenti -
+ralentis -
+ralentie -
+ralenties -
+jeune +
+jeunes +
 abondant ++
 abondants ++
 abondante ++
@@ -520,9 +530,6 @@ substantiel ++
 substantiels ++
 substantielle ++
 substantielles ++
-
-GOUT être paraître sembler penser trouver juger (avoir l'air) rester
-
 amer --
 amers --
 délicieux ++
@@ -559,9 +566,6 @@ savoureux ++
 savoureuse ++
 savoureuses ++
 sans saveur --
-
-TACTILE être paraître sembler penser trouver juger (avoir l'air) rester
-
 dur =
 durs =
 dure =
@@ -595,35 +599,35 @@ inégale --
 inégales --
 humide --
 humides --
-
-COULEURS être paraître sembler penser trouver juger (avoir l'air) rester
-
-azur
-azurs
-azure
-azures
-bleu
-bleus
-bleue
-bleues
-noir
-noire
-noirs
-noires
-cramoisi
-cramoisis
-cramoisie
-cramoisies
-cyan
-or
-vert
-verts
-verte
-vertes
-magenta
-orange
-oranges
-rose
-roses
-turquoise
-turquoises
+azur =
+azurs =
+azure =
+azures =
+bleu =
+bleus =
+bleue =
+bleues =
+noir =
+noire =
+noirs =
+noires =
+cramoisi =
+cramoisis =
+cramoisie =
+cramoisies =
+cyan =
+vert =
+verts =
+verte =
+vertes =
+magenta =
+orange =
+oranges =
+rose =
+roses =
+turquoise =
+turquoises =
+gentil ++
+gentils ++
+gentille ++
+gentilles ++

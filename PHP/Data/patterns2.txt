@@ -1,0 +1,64 @@
+quoi
+Vous savez pertinemment de quoi je parle, n'est-ce pas ?
+qui
+À votre avis ?
+comment
+Allons... Faites un petit effort de réflexion ! Ne voyez-vous pas ?
+pourquoi
+Pourquoi ? Voyons... C'est évident. Ne pensez-vous pas ?
+où
+N'importe quel endroit. Lequel jugez-vous être le plus pertinent ?
+USER abandonner
+Pourquoi abandonner ?
+USER abandonner NEGATION
+Vous êtes quelqu'un d'admirable, j'en suis convaincu. Parlez-moi un peu plus de vous !
+USER abattre
+Êtes-vous quelqu'un de violent ?
+USER abattre NEGATION
+C'est plutôt une bonne chose, n'est-ce pas ?
+USER aborder
+Dites m'en plus !
+USER aborder NEGATION
+Il semble que vous soyez d'un naturel timide. Pourquoi cela ?
+USER accepter
+Je suis du même avis que vous. Pouvez-vous m'en dire plus sur le sujet ?
+USER accepter NEGATION
+Pourquoi un tel refus ?
+USER accomplir
+Je vous félicite. Était-ce compliqué ?
+USER accomplir NEGATION
+Est-ce une déception pour vous ?
+USER accorder
+Je comprends... Mais pourquoi accordez-vous cela ?
+USER accorder NEGATION
+Je ne vois pas pourquoi. Pouvez-vous m'expliquer ?
+USER accrocher
+Pourquoi me dites-vous cela ?
+USER accrocher NEGATION
+Pourquoi ne pas l'accrocher ?
+USER accueillir
+Vous avez agit comme il le fallait, qu'en pensez-vous ?
+USER accueillir NEGATION
+Vraiment ? Pourquoi cela ?
+USER accuser
+Quels sont les indices qui vous mettent sur cette piste ?
+USER accuser NEGATION
+Je vois. Vous préférez donc éviter le problème ?
+USER acheter
+Cela coûte-t-il cher ?
+USER acheter NEGATION
+Vous avez raison, personne ne peut se permettre de l'acheter.
+USER achever
+
+
+
+
+
+
+
+
+
+USER rencontrer
+A quel occasion ?
+USER rencontrer NEGATION
+Pensez-vous que c'est une bonne chose ?

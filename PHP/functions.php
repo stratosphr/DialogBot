@@ -13,4 +13,7 @@ $message = (isset($_GET['message'])) ? $_GET['message'] : '';
 $m = new MessageAnalyzer($message, $use_spellchecker);
 echo str_replace('#', '#<br />', $m);
 
+$answerer = new Answerer($m);
+echo $answerer->getAnswer();
+
 ?>

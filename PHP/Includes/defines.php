@@ -1,5 +1,6 @@
 <?php
 
+define('DATA_ADJECTIVES', 'Data/adjectives.dat');
 define('DATA_CONJUGATED_VERBS', 'Data/conjugated_verbs.dat');
 define('DATA_INTERROGATIVE_WORDS', 'Data/interrogative_words.dat');
 define('DATA_KNOWN_WORDS', 'Data/known_words.dat');
@@ -8,8 +9,8 @@ define('DATA_SUBJECTS', 'Data/subjects.dat');
 
 define('ERROR_MESSAGE_NOT_STRING', '__message__');
 
-function startsWith($str, $search){
-	 return !strncmp($str, $search, strlen($str));
+function startsWith($search, $str){
+	 return !strncmp($search, $str, strlen($search));
 }
 
 function endsWith($search, $str){

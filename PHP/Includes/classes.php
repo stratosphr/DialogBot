@@ -1,255 +1,383 @@
 <?php
 
+//TODO : elle n'est pas mal élevée mais belle : NEGATION[mal élevée]
+//TODO : elle n'est pas mal élevée mais pas belle : NEGATION[mal élevée, belle]
+//TODO : ne ... ni; Elle n'est ni mal élevée ni belle : NEGATION[mal élevée, belle]
+
 include_once('defines.php');
 
 class MessageAnalyzer{
 
-	 private $message;
-	 private $use_spellchecker = false;
+    private $message;
+    private $use_spellchecker = false;
 
-	 public function __construct($message, $use_spellchecker){
-		  $this->setMessage($message);
-		  $this->setUseSpellchecker($use_spellchecker);
-	 }
+    public function __construct($message, $use_spellchecker=false){
+        $this->setMessage($message);
+        $this->setUseSpellchecker($use_spellchecker);
+    }
 
-	 public function __toString(){
-		  $to_string = 'answer: '.$this->getAnswer().' #';
-		  $to_string .= 'verbs:';
-		  foreach($this->getVerbs() as $verb) $to_string .= ' '.$verb[0].' => '.$verb[1].' |';
-		  $to_string .= '#';
-		  $to_string .= 'subjects:';
-		  foreach($this->getSubjects() as $subject) $to_string .= ' '.$subject[0].' => '.$subject[1].' |';
-		  $to_string .= '#';
-		  $to_string .= 'question: '.$this->getQuestion().' #';
-		  $to_string .= 'negation: '.$this->getNegation().' #';
-		  return $to_string;
-	 }
+    public function __toString(){
+        $to_string = 'verbs:';
+        foreach($this->getVerbs() as $verb) $to_string .= ' '.$verb[0].' => '.$verb[1].' |';
+        $to_string .= '#';
+        $to_string .= 'subject:';
+        $subject = $this->getSubject();
+        $to_string .= ' '.$subject[0][0].' => '.$subject[0][1].' |';
+        $to_string .= '#';
+        $to_string .= 'question: '.$this->getQuestion().' #';
+        $to_string .= 'negation: '.$this->getNegation().' #';
+        $to_string .= 'adjectives: ';
+        foreach($this->getAdjectives() as $adjective) $to_string .= ' '.$adjective.' |';
+        $to_string .= '#';
+        return $to_string;
+    }
 
-	 public function getAnswer(){
-		  return $this->message;
-	 }
+    public function getAdjectives(){
+        $adjectives = array();
+        $known_adjectives = file(DATA_ADJECTIVES, FILE_IGNORE_NEW_LINES);
+        $index = 0;
+        $previous_pos = 0;
+        $words = explode(' ', $this->message);
+        foreach($words as $word){
+            foreach($known_adjectives as $known_adjective){
+                $known_adjective = preg_replace(array('#[+-=]+#', '# $#'), '', $known_adjective);
+                if($word == $known_adjective) $adjectives[] = $known_adjective;
+            }
+        }
 
-	 public function getNegation(){
-		  $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
-		  $verbs = $this->getVerbs();
-		  $words = explode(' ', $this->message);
-		  $negation = 'NOT_NEGATION';
-		  $index_DISCORDANTIAL = -1;
-		  $index_FORCLUSIVE = -1;
-		  $index_VERB = -1;
-		  foreach($words as $key=>$word){
-			   if($word == 'ne') $index_DISCORDANTIAL = $key;
-			   else if(in_array($word, $negative_words)) $index_FORCLUSIVE = $key;
-			   else{
-					foreach($verbs as $verb)
-						 if($word == $verb[1]) $index_VERB = $key;
-			   }
-			   if($index_DISCORDANTIAL != -1 && $index_FORCLUSIVE != -1 && $index_VERB != -1){
-					if($index_DISCORDANTIAL < $index_VERB) $negation = 'NEGATION';
-			   }
-		  }
-		  return $negation;
-	 }
+        return $adjectives;
+    }
 
-	 public function getMessage(){
-		  return $this->message;
-	 }
+    public function getNegation(){
+        $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+        $verbs = $this->getVerbs();
+        $words = explode(' ', $this->message);
+        $negation = 'NOT_NEGATION';
+        $index_DISCORDANTIAL = -1;
+        $index_FORCLUSIVE = -1;
+        $index_VERB = -1;
+        foreach($words as $key=>$word){
+            if($word == 'ne') $index_DISCORDANTIAL = $key;
+            else if(in_array($word, $negative_words)) $index_FORCLUSIVE = $key;
+            else{
+                foreach($verbs as $verb)
+                    if($word == $verb[1]) $index_VERB = $key;
+            }
+            if($index_DISCORDANTIAL != -1 && $index_FORCLUSIVE != -1 && $index_VERB != -1){
+                if($index_DISCORDANTIAL < $index_VERB) $negation = 'NEGATION';
+            }
+        }
+        return $negation;
+    }
 
-	 public function getQuestion(){
-		  $interrogative_words = file(DATA_INTERROGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
-		  $words = explode(' ', $this->message);
-		  $first_verb = (isset($this->getVerbs()[0][1])) ? $this->getVerbs()[0][1] : null;
-		  $first_subject = (isset($this->getSubjects()[0][1])) ? $this->getSubjects()[0][1] : null;
+    public function getMessage(){
+        return $this->message;
+    }
 
-		  // Testing patterns 'est ce que .*' and '.* ?'
-		  $question = endsWith('?', $this->message) ? 'QUESTION' : 'NOT_QUESTION';
+    public function getQuestion(){
+        $interrogative_words = file(DATA_INTERROGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+        $words = explode(' ', $this->message);
+        $first_verb = (isset($this->getVerbs()[0][1])) ? $this->getVerbs()[0][1] : null;
+        $first_subject = (isset($this->getSubject()[0][1])) ? $this->getSubject()[0][1] : null;
 
-		  // Testing pattern '.* VERB SUBJECT .*'
-		  $verb_found = false;
-		  foreach($words as $key => $word){
-			   if($word == $first_verb) $verb_found = true;
-			   else if($word == $first_subject && $verb_found) $question = 'QUESTION';
-		  }
+        // Testing patterns 'est ce que .*' and '.* ?'
+        $question = endsWith('?', $this->message) ? 'QUESTION' : 'NOT_QUESTION';
 
-		  // Testing pattern '.* INTERROGATVIE_WORD .*'
-		  foreach($words as $word){
-			   foreach($interrogative_words as $key=>$interrogative_word){
-					if($word == $interrogative_word && $key % 2 == 0)
-						 $question = $interrogative_words[$key + 1];
-			   }
-			   if($question != 'QUESTION' && $question != 'NOT_QUESTION') break;
-		  }
+        // Testing pattern '.* VERB SUBJECT .*'
+        $verb_found = false;
+        foreach($words as $key => $word){
+            if($word == $first_verb) $verb_found = true;
+            else if($word == $first_subject && $verb_found) $question = 'QUESTION';
+        }
 
-		  return $question;
-	 }
+        // Testing pattern '.* INTERROGATVIE_WORD .*'
+        foreach($words as $word){
+            foreach($interrogative_words as $key=>$interrogative_word){
+                if($word == $interrogative_word && $key % 2 == 0)
+                    $question = $interrogative_words[$key + 1];
+            }
+            if($question != 'QUESTION' && $question != 'NOT_QUESTION') break;
+        }
 
-	 public function getSubjects(){
-		  $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
-		  $found_subjects = array();
-		  $verbs = $this->getVerbs();
-		  $words = explode(' ', $this->message);
-		  
-		  //Removing negations and adjectives
-		  foreach($words as $key => $word){
-			   if($word == 'ne' || in_array($word, $negative_words)){
-					unset($words[$key]);
-					array_values($words);
-					print_r($words); echo '<br />';
-			   }
-		  }
+        return $question;
+    }
 
-		  if(count($words > 0)){
-			   $interrogative_words = file(DATA_INTERROGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
-			   $subjects = file(DATA_SUBJECTS, FILE_IGNORE_NEW_LINES);
+    public function getResidual(){
+        $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+        $subject = $this->getSubject()[0][1];
+        $verbs = $this->getVerbs();
+        $question = $this->getQuestion();
+        $residual = array();
+        $known_adjectives = file(DATA_ADJECTIVES, FILE_IGNORE_NEW_LINES);
+        $adjectives = $this->getAdjectives();
+        $known_adjectives_values = array();
 
-			   // Testing pattern 'QUESTION VERB SUBJECT .*'
-			   if(in_array($words[0], $interrogative_words)){
-					if(isset($words[1]) && isset($words[2])){
-						 $verb_found = false;
-						 foreach($verbs as $verb)
-							  if($words[1] == $verb[1]) $verb_found = true;
-						 if($verb_found){
-							  foreach($subjects as $line){
-								   $subjects_xtalk = explode(' ', $line);
-								   if(in_array($words[2], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[2]);
-							  }
-						 }
-					}
-			   }
+        foreach($known_adjectives as $known_adjective){
+            $adjective_and_value = explode(' ', $known_adjective);
+            $known_adjective = $adjective_and_value[0];
+            $adjective_value = $adjective_and_value[1];
+            $known_adjectives_values[$known_adjective] = mb_substr_count($adjective_value, '=');
+            $known_adjectives_values[$known_adjective] += mb_substr_count($adjective_value, '+');
+            $known_adjectives_values[$known_adjective] -= mb_substr_count($adjective_value, '-');
+        }
 
-			   // Testing pattern 'QUESTION SUBJECT VERB .*'
-			   if(in_array($words[0], $interrogative_words)){
-					if(isset($words[1]) && isset($words[2])){
-						 $verb_found = false;
-						 foreach($verbs as $verb)
-							  if($words[2] == $verb[1]) $verb_found = true;
-						 if($verb_found){
-							  foreach($subjects as $line){
-								   $subjects_xtalk = explode(' ', $line);
-								   if(in_array($words[1], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[1]);
-							  }
-						 }
-					}
-			   }
+        $average_adjectives_value = 0;
+        foreach($adjectives as $adjective){
+            $average_adjectives_value += $known_adjectives_values[$adjective];
+        }
+        $average_adjectives_value /= count($adjectives);
 
-			   // Testing pattern 'SUBJECT VERB .*'
-			   if(isset($words[1])){
-					$verb_found = false;
-					foreach($verbs as $verb)
-						 if($words[1] == $verb[1]) $verb_found = true;
-					if($verb_found){
-						 foreach($subjects as $line){
-							  $subjects_xtalk = explode(' ', $line);
-							  if(in_array($words[0], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[0]);
-						 }
-					}
-			   }
+        //Removing negations
+        $words = explode(' ', $this->message);
+        $tmp_words = array();
+        foreach($words as $key => $word){
+            if($word != 'ne' && !in_array($word, $negative_words)) $tmp_words[] = $word;
+        }
+        $words = $tmp_words;
 
-			   // Testing pattern 'VERB SUBJECT .*'
-			   if(isset($words[1])){
-					$verb_found = false;
-					foreach($verbs as $verb)
-						 if($words[0] == $verb[1]) $verb_found = true;
-					if($verb_found){
-						 foreach($subjects as $line){
-							  $subjects_xtalk = explode(' ', $line);
-							  if(in_array($words[1], $subjects_xtalk)) $found_subjects[] = array($subjects_xtalk[0], $words[1]);
-						 }
-					}
-			   }
-		  }
+        $is_verb = false;
+        foreach($words as $word){
+            foreach($verbs as $verb)
+                if($word == $verb[1]) $is_verb = true;
+            if($word != $subject && !$is_verb && $word != $question) $residual[] = $word;
+            $is_verb = false;
+        }
 
-		  if(count($found_subjects) == 0) $found_subjects[] = array('OTHER', 'OTHER');
+        $words = array();
+        foreach($residual as $word){
+            if(!in_array($word, $adjectives)) $words[] = $word;
+        }
 
-		  return $found_subjects;
-	 }
+        return new Residual(implode(' ', $words), $average_adjectives_value);
 
-	 public function getUseSpellchecker(){
-		  return $this->use_spellchecker;
-	 }
+    }
 
-	 public function getVerbs(){
-		  $conjugated_verbs = file(DATA_CONJUGATED_VERBS, FILE_IGNORE_NEW_LINES);
-		  $words = explode(' ', $this->message);
-		  $verbs = array();
-		  foreach($words as $word){
-			   if($word != ''){
-					foreach($conjugated_verbs as $conjugated_verb){
-						 $conjugations = explode(' ', $conjugated_verb);
-						 if(in_array($word, $conjugations)) $verbs[] = array($conjugations[0], $word);
-					}
-			   }
-		  }
-		  return $verbs;
-	 }
+    public function getSubject(){
+        $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+        $found_subject = array();
+        $verbs = $this->getVerbs();
 
-	 public function setMessage($message){
-		  if(is_string($message)){
-			   if($this->use_spellchecker) $this->message = $this->spellcheck($this->normalize($message));
-			   else $this->message = $this->normalize($message);
-		  }
-		  else $this->message = ERROR_MESSAGE_NOT_STRING;
-	 }
+        //Removing negations
+        $words = explode(' ', $this->message);
+        $tmp_words = array();
+        foreach($words as $key => $word){
+            if($word != 'ne' && !in_array($word, $negative_words)) $tmp_words[] = $word;
+        }
+        $words = $tmp_words;
 
-	 public function setUseSpellchecker($use_spellchecker){
-		  if(is_bool($use_spellchecker)){
-			   $this->use_spellchecker = $use_spellchecker;
-			   $this->setMessage($this->message);
-		  }
-		  else $this->use_spellchecker = false;
-	 }
+        // If there are any words in the message
+        if(count($words > 0)){
+            $interrogative_words = file(DATA_INTERROGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
+            $subjects = file(DATA_SUBJECTS, FILE_IGNORE_NEW_LINES);
 
-	 public function normalize($message){
-		  $message = toLower($message);
-		  $message = preg_replace('# *([,?;.:!]) *#', ' $1 ', $message);
-		  $message = preg_replace(array('#\bt( |-)+(il|elle|on|ils|elles)\b#'), array(' $2'), $message);
-		  $message = str_replace('-', ' ', $message); // Dashes
-		  $message = str_replace('\'', ' ', $message); // Single quotes
-		  $message = preg_replace(array('#([[:blank:]]+|^)c([[:blank:]]+|$)#', '#([[:blank:]]+|^)d([[:blank:]]+|$)#', '#([[:blank:]]+|^)j([[:blank:]]+|$)#', '#([[:blank:]]+|^)l([[:blank:]]+|$)#', '#([[:blank:]]+|^)m([[:blank:]]+|$)#', '#([[:blank:]]+|^)n([[:blank:]]+|$)#', '#([[:blank:]]+|^)qu([[:blank:]]+|$)#', '#([[:blank:]]+|^)s([[:blank:]]+|$)#', '#([[:blank:]]+|^)t([[:blank:]]+|$)#'), array(' cela ', ' de ', ' je ', ' le ', ' me ', ' ne ', ' que ', ' se ', ' te '), $message); // Contractions
-		  $message = str_replace('est ce que', '__est_ce_que__', $message);
-		  echo 'Normalized : #'.$message.'#<br />';
-		  return $message;
-	 }
+            // Testing pattern 'QUESTION VERB SUBJECT .*'
+            if(in_array($words[0], $interrogative_words)){
+                if(isset($words[1]) && isset($words[2])){
+                    $verb_found = false;
+                    foreach($verbs as $verb)
+                        if($words[1] == $verb[1]) $verb_found = true;
+                    if($verb_found){
+                        foreach($subjects as $line){
+                            $subjects_xtalk = explode(' ', $line);
+                            if(in_array($words[2], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[2]);
+                        }
+                    }
+                }
+            }
 
-	 public function spellcheck($message){
-		  $known_words = file(DATA_KNOWN_WORDS, FILE_IGNORE_NEW_LINES);
-		  $words = explode(' ', $message);
-		  $check = '';
-		  $correction = array();
-		  $corrected = false;
-		  $best_percentage = 0;
-		  $best_correction = false;
-		  foreach($words as $word){
-			   if($word != ''){
-					if(in_array($word, $known_words)) $correction[] = $word; // Word is known
-					else{ // Word is unknown
-						 foreach($known_words as $known_word){
-							  $metaphone = levenshtein(metaphone($word), metaphone($known_word), 0, 0, 1);
-							  similar_text('a'.$word.'a', 'a'.$known_word.'a', $percentage);
-							  $levenshtein = levenshtein($word, $known_word, 2, 1, 1);
+            // Testing pattern 'QUESTION SUBJECT VERB .*'
+            if(in_array($words[0], $interrogative_words)){
+                if(isset($words[1]) && isset($words[2])){
+                    $verb_found = false;
+                    foreach($verbs as $verb)
+                        if($words[2] == $verb[1]) $verb_found = true;
+                    if($verb_found){
+                        foreach($subjects as $line){
+                            $subjects_xtalk = explode(' ', $line);
+                            if(in_array($words[1], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[1]);
+                        }
+                    }
+                }
+            }
 
-							  // The known word could potentially be the misspelled word
-							  if($metaphone == 0 && $percentage >= 75 && $levenshtein < 4){
-								   if($percentage > $best_percentage){
-										$corrected = true;
-										$best_correction = $known_word;
-										$best_percentage = $percentage;
-								   }
-							  }
+            // Testing pattern 'SUBJECT VERB .*'
+            if(isset($words[1])){
+                $verb_found = false;
+                foreach($verbs as $verb)
+                    if($words[1] == $verb[1]) $verb_found = true;
+                if($verb_found){
+                    foreach($subjects as $line){
+                        $subjects_xtalk = explode(' ', $line);
+                        if(in_array($words[0], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[0]);
+                    }
+                }
+            }
 
-						 }
-						 if(!$corrected) $correction[] = $word;
-						 else $correction[] = $best_correction;
-						 $corrected = false;
-						 $best_correction = false;
-						 $best_percentage = 0;
-					}
-			   }
-		  }
-		  $spellchecked_message = implode(' ', $correction);
-		  echo 'Correction : '.$message.' => '.$spellchecked_message.'<br />';
-		  return $spellchecked_message;
-	 }
+            // Testing pattern 'VERB SUBJECT .*'
+            if(isset($words[1])){
+                $verb_found = false;
+                foreach($verbs as $verb)
+                    if($words[0] == $verb[1]) $verb_found = true;
+                if($verb_found){
+                    foreach($subjects as $line){
+                        $subjects_xtalk = explode(' ', $line);
+                        if(in_array($words[1], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[1]);
+                    }
+                }
+            }
+
+            //Testing pattern 'SUBJECT * VERB'
+            foreach($subjects as $line){
+                $subjects_xtalk = explode(' ', $line);
+                if(in_array($words[0], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[0]);
+            }
+
+        }
+
+        if(count($found_subject) == 0) $found_subject[0] = array('OTHER', 'OTHER');
+
+        return $found_subject;
+    }
+
+    public function getTokenTalk(){
+        $token_talk = '';
+        $subject = $this->getSubject()[0][0];
+        $negation = $this->getNegation();
+        $last_verb_index = count($this->getVerbs());
+        if($last_verb_index > 0) $last_verb = $this->getVerbs()[$last_verb_index - 1][0];
+        else $last_verb = '';
+        $question = $this->getQuestion();
+        $residual = $this->getResidual();
+        $token_talk .= $question . ' ' . $subject . ' ' . $negation . ' ' . $last_verb . ' ' . $residual;
+
+        return $token_talk;
+    }
+
+    public function getUseSpellchecker(){
+        return $this->use_spellchecker;
+    }
+
+    public function getVerbs(){
+        $conjugated_verbs = file(DATA_CONJUGATED_VERBS, FILE_IGNORE_NEW_LINES);
+        $words = explode(' ', $this->message);
+        $verbs = array();
+        foreach($words as $word){
+            if($word != ''){
+                foreach($conjugated_verbs as $conjugated_verb){
+                    $conjugations = explode(' ', $conjugated_verb);
+                    if(in_array($word, $conjugations)) $verbs[] = array($conjugations[0], $word);
+                }
+            }
+        }
+        return $verbs;
+    }
+
+    public function setMessage($message){
+        if(is_string($message)){
+            if($this->use_spellchecker) $this->message = $this->spellcheck($this->normalize($message));
+            else $this->message = $this->normalize($message);
+        }
+        else $this->message = ERROR_MESSAGE_NOT_STRING;
+    }
+
+    public function setUseSpellchecker($use_spellchecker){
+        if(is_bool($use_spellchecker)){
+            $this->use_spellchecker = $use_spellchecker;
+            $this->setMessage($this->message);
+        }
+        else $this->use_spellchecker = false;
+    }
+
+    public function normalize($message){
+        $message = toLower($message);
+        $message = preg_replace('# *([,?;.:!]) *#', ' $1 ', $message);
+        $message = preg_replace(array('#\bt( |-)+(il|elle|on|ils|elles)\b#'), array(' $2'), $message);
+        $message = str_replace('-', ' ', $message); // Dashes
+        $message = str_replace('\'', ' ', $message); // Single quotes
+        $match = array('#([[:blank:]]+|^)s([[:blank:]]+)il([[:blank:]]+|$)#', '#([[:blank:]]+|^)c([[:blank:]]+|$)#', '#([[:blank:]]+|^)d([[:blank:]]+|$)#', '#([[:blank:]]+|^)j([[:blank:]]+|$)#', '#([[:blank:]]+|^)l([[:blank:]]+|$)#', '#([[:blank:]]+|^)m([[:blank:]]+|$)#', '#([[:blank:]]+|^)n([[:blank:]]+|$)#', '#([[:blank:]]+|^)qu([[:blank:]]+|$)#', '#([[:blank:]]+|^)s([[:blank:]]+|$)#', '#([[:blank:]]+|^)t([[:blank:]]+|$)#', '#([[:blank:]]+|^)puisqu([[:blank:]]+|$)#', '#([[:blank:]]+|^)quoiqu([[:blank:]]+|$)#', '#([[:blank:]]+|^)jusqu([[:blank:]]+|$)#', '#([[:blank:]]+|^)lorsqu([[:blank:]]+|$)#');
+        $replace = array(' si il ', ' cela ', ' de ', ' je ', ' le ', ' me ', ' ne ', ' que ', ' se ', ' te ', ' puisque ', ' quoique ', ' jusque ', 'lorsque');
+        $message = preg_replace($match, $replace, $message); // Contractions
+        $message = str_replace('est ce que', '__est_ce_que__', $message);
+        $message = str_replace('aujourd hui', 'aujourd\'hui', $message);
+        $message = str_replace('parce que', 'puisque', $message);
+        echo 'Normalized : #'.$message.'#<br />';
+        return $message;
+    }
+
+    public function spellcheck($message){
+        $known_words = file(DATA_KNOWN_WORDS, FILE_IGNORE_NEW_LINES);
+        $words = explode(' ', $message);
+        $check = '';
+        $correction = array();
+        $corrected = false;
+        $best_percentage = 0;
+        $best_correction = false;
+        foreach($words as $word){
+            if($word != ''){
+                if(in_array($word, $known_words)) $correction[] = $word; // Word is known
+                else{ // Word is unknown
+                    foreach($known_words as $known_word){
+                        $metaphone = levenshtein(metaphone($word), metaphone($known_word), 0, 0, 1);
+                        similar_text('a'.$word.'a', 'a'.$known_word.'a', $percentage);
+                        $levenshtein = levenshtein($word, $known_word, 2, 1, 1);
+
+                        // The known word could potentially be the misspelled word
+                        if($metaphone == 0 && $percentage >= 75 && $levenshtein < 4){
+                            if($percentage > $best_percentage){
+                                $corrected = true;
+                                $best_correction = $known_word;
+                                $best_percentage = $percentage;
+                            }
+                        }
+
+                    }
+                    if(!$corrected) $correction[] = $word;
+                    else $correction[] = $best_correction;
+                    $corrected = false;
+                    $best_correction = false;
+                    $best_percentage = 0;
+                }
+            }
+        }
+        $spellchecked_message = implode(' ', $correction);
+        echo 'Correction : '.$message.' => '.$spellchecked_message.'<br />';
+        return $spellchecked_message;
+    }
+
+}
+
+class Answerer{
+
+    private $message_analyzer;
+
+    public function __construct($message_analyzer){
+        $this->setMessageAnalyzer($message_analyzer);
+    }
+
+    public function setMessageAnalyzer($message_analyzer){
+        if(is_a($message_analyzer, 'MessageAnalyzer')) $this->message_analyzer = $message_analyzer;
+        else $this->message_analyzer = new MessageAnalyzer('', false);
+    }
+
+    public function getAnswer(){
+        return $this->message_analyzer->getTokenTalk();
+    }
+
+}
+
+class Residual{
+
+    private $text;
+    private $score;
+
+    public function __construct($text='', $score=0){
+        setText($text);
+        setScore($score);
+    }
+
+    public function setText($text){
+
+    }
 
 }
 

@@ -1,11 +1,5 @@
 <?php
 
-//TODO : elle n'est pas mal élevée mais belle : NEGATION[mal élevée]
-//TODO : elle n'est pas mal élevée mais pas belle : NEGATION[mal élevée, belle]
-//TODO : ne ... ni; Elle n'est ni mal élevée ni belle : NEGATION[mal élevée, belle]
-
-include_once('defines.php');
-
 class MessageAnalyzer{
 
     private $message;
@@ -29,6 +23,7 @@ class MessageAnalyzer{
         $to_string .= 'adjectives: ';
         foreach($this->getAdjectives() as $adjective) $to_string .= ' '.$adjective.' |';
         $to_string .= '#';
+        $toto = new Subject($subject[0][0]);
         return $to_string;
     }
 
@@ -108,24 +103,6 @@ class MessageAnalyzer{
         $verbs = $this->getVerbs();
         $question = $this->getQuestion();
         $residual = array();
-        $known_adjectives = file(DATA_ADJECTIVES, FILE_IGNORE_NEW_LINES);
-        $adjectives = $this->getAdjectives();
-        $known_adjectives_values = array();
-
-        foreach($known_adjectives as $known_adjective){
-            $adjective_and_value = explode(' ', $known_adjective);
-            $known_adjective = $adjective_and_value[0];
-            $adjective_value = $adjective_and_value[1];
-            $known_adjectives_values[$known_adjective] = mb_substr_count($adjective_value, '=');
-            $known_adjectives_values[$known_adjective] += mb_substr_count($adjective_value, '+');
-            $known_adjectives_values[$known_adjective] -= mb_substr_count($adjective_value, '-');
-        }
-
-        $average_adjectives_value = 0;
-        foreach($adjectives as $adjective){
-            $average_adjectives_value += $known_adjectives_values[$adjective];
-        }
-        $average_adjectives_value /= count($adjectives);
 
         //Removing negations
         $words = explode(' ', $this->message);
@@ -143,12 +120,10 @@ class MessageAnalyzer{
             $is_verb = false;
         }
 
-        $words = array();
-        foreach($residual as $word){
-            if(!in_array($word, $adjectives)) $words[] = $word;
-        }
-
-        return new Residual(implode(' ', $words), $average_adjectives_value);
+        $residual = implode(' ', $residual);
+        $toto = new Residual($residual);
+        echo $toto->getScore();
+        return new Residual($residual);
 
     }
 
@@ -342,41 +317,6 @@ class MessageAnalyzer{
         $spellchecked_message = implode(' ', $correction);
         echo 'Correction : '.$message.' => '.$spellchecked_message.'<br />';
         return $spellchecked_message;
-    }
-
-}
-
-class Answerer{
-
-    private $message_analyzer;
-
-    public function __construct($message_analyzer){
-        $this->setMessageAnalyzer($message_analyzer);
-    }
-
-    public function setMessageAnalyzer($message_analyzer){
-        if(is_a($message_analyzer, 'MessageAnalyzer')) $this->message_analyzer = $message_analyzer;
-        else $this->message_analyzer = new MessageAnalyzer('', false);
-    }
-
-    public function getAnswer(){
-        return $this->message_analyzer->getTokenTalk();
-    }
-
-}
-
-class Residual{
-
-    private $text;
-    private $score;
-
-    public function __construct($text='', $score=0){
-        setText($text);
-        setScore($score);
-    }
-
-    public function setText($text){
-
     }
 
 }

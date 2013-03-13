@@ -59,11 +59,7 @@ douce ++
 douces ++
 simple +
 simples +
-mal --
-mal élevé ---
-mal élevés ---
-mal élevée ---
-mal élevées ---
+mal ---
 gai +
 gais +
 gaie +
@@ -96,10 +92,10 @@ souriant ++
 souriants ++
 souriante ++
 souriantes ++
-plein d'assurance ++
-pleins d'assurance ++
-pleine d'assurance ++
-pleines d'assurance ++
+plein = 
+pleins = 
+pleine =
+pleines =
 snob -
 snobs -
 pensif =
@@ -302,7 +298,10 @@ absurde ---
 absurdes ---
 peur ---
 peurs ---
-en colère ---
+colère ---
+coléreux ---
+coléreuse ---
+coléreuses ---
 anxieux --
 anxieuse --
 anxieuses --
@@ -313,7 +312,6 @@ ennuyé --
 ennuyés --
 ennuyée --
 ennuyées --
-fou furieux ---
 furieux ---
 furieuse ---
 furieuses ---
@@ -359,7 +357,8 @@ endeuilé ----
 endeuilés ----
 endeuilée ----
 endeuilées ----
-en deuil ----
+deuil ----
+deuils ----
 fidèle ++
 fidèles ++
 infidèle --
@@ -442,10 +441,6 @@ méchantes ---
 las --
 lasse --
 lasses --
-plein d'entrain ++
-pleins d'entrain ++
-pleine d'entrain ++
-pleines d'entrain ++
 grand =
 grands =
 grande =
@@ -565,12 +560,11 @@ salées -
 savoureux ++
 savoureuse ++
 savoureuses ++
-sans saveur --
 dur =
 durs =
 dure =
 dures =
-en vrac --
+vrac --
 rugueux --
 rugueuse --
 rugueuses --

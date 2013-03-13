@@ -12,18 +12,18 @@ class MessageAnalyzer{
 
     public function __toString(){
         $to_string = 'verbs:';
-        foreach($this->getVerbs() as $verb) $to_string .= ' '.$verb[0].' => '.$verb[1].' |';
+        foreach($this->getVerbs() as $verb) $to_string .= ' '.$verb->getInfinitive().' => '.$verb->getText().' |';
         $to_string .= '#';
         $to_string .= 'subject:';
         $subject = $this->getSubject();
-        $to_string .= ' '.$subject[0][0].' => '.$subject[0][1].' |';
+        $to_string .= ' '.$subject->getTokenTalk().' => '.$subject->getText().' |';
         $to_string .= '#';
         $to_string .= 'question: '.$this->getQuestion().' #';
         $to_string .= 'negation: '.$this->getNegation().' #';
         $to_string .= 'adjectives: ';
         foreach($this->getAdjectives() as $adjective) $to_string .= ' '.$adjective.' |';
         $to_string .= '#';
-        $toto = new Subject($subject[0][0]);
+        $to_string .= 'residual: ' . $this->getResidual()->getTokenTalk() . '#';
         return $to_string;
     }
 
@@ -56,7 +56,7 @@ class MessageAnalyzer{
             else if(in_array($word, $negative_words)) $index_FORCLUSIVE = $key;
             else{
                 foreach($verbs as $verb)
-                    if($word == $verb[1]) $index_VERB = $key;
+                    if($word == $verb->getText()) $index_VERB = $key;
             }
             if($index_DISCORDANTIAL != -1 && $index_FORCLUSIVE != -1 && $index_VERB != -1){
                 if($index_DISCORDANTIAL < $index_VERB) $negation = 'NEGATION';
@@ -72,8 +72,8 @@ class MessageAnalyzer{
     public function getQuestion(){
         $interrogative_words = file(DATA_INTERROGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
         $words = explode(' ', $this->message);
-        $first_verb = (isset($this->getVerbs()[0][1])) ? $this->getVerbs()[0][1] : null;
-        $first_subject = (isset($this->getSubject()[0][1])) ? $this->getSubject()[0][1] : null;
+        $first_verb = (isset($this->getVerbs()[0])) ? $this->getVerbs()[0]->getText() : null;
+        $subject = $this->getSubject()->getText();
 
         // Testing patterns 'est ce que .*' and '.* ?'
         $question = endsWith('?', $this->message) ? 'QUESTION' : 'NOT_QUESTION';
@@ -82,7 +82,7 @@ class MessageAnalyzer{
         $verb_found = false;
         foreach($words as $key => $word){
             if($word == $first_verb) $verb_found = true;
-            else if($word == $first_subject && $verb_found) $question = 'QUESTION';
+            else if($word == $subject && $verb_found) $question = 'QUESTION';
         }
 
         // Testing pattern '.* INTERROGATVIE_WORD .*'
@@ -99,7 +99,7 @@ class MessageAnalyzer{
 
     public function getResidual(){
         $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
-        $subject = $this->getSubject()[0][1];
+        $subject = $this->getSubject()->getText();
         $verbs = $this->getVerbs();
         $question = $this->getQuestion();
         $residual = array();
@@ -115,21 +115,19 @@ class MessageAnalyzer{
         $is_verb = false;
         foreach($words as $word){
             foreach($verbs as $verb)
-                if($word == $verb[1]) $is_verb = true;
+                if($word == $verb->getText()) $is_verb = true;
             if($word != $subject && !$is_verb && $word != $question) $residual[] = $word;
             $is_verb = false;
         }
 
         $residual = implode(' ', $residual);
-        $toto = new Residual($residual);
-        echo $toto->getScore();
         return new Residual($residual);
 
     }
 
     public function getSubject(){
         $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
-        $found_subject = array();
+        $found_subject = new Subject('');
         $verbs = $this->getVerbs();
 
         //Removing negations
@@ -150,11 +148,11 @@ class MessageAnalyzer{
                 if(isset($words[1]) && isset($words[2])){
                     $verb_found = false;
                     foreach($verbs as $verb)
-                        if($words[1] == $verb[1]) $verb_found = true;
+                        if($words[1] == $verb->getText()) $verb_found = true;
                     if($verb_found){
                         foreach($subjects as $line){
                             $subjects_xtalk = explode(' ', $line);
-                            if(in_array($words[2], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[2]);
+                            if(in_array($words[2], $subjects_xtalk)) $found_subject = new Subject($words[2]);
                         }
                     }
                 }
@@ -165,11 +163,11 @@ class MessageAnalyzer{
                 if(isset($words[1]) && isset($words[2])){
                     $verb_found = false;
                     foreach($verbs as $verb)
-                        if($words[2] == $verb[1]) $verb_found = true;
+                        if($words[2] == $verb->getText()) $verb_found = true;
                     if($verb_found){
                         foreach($subjects as $line){
                             $subjects_xtalk = explode(' ', $line);
-                            if(in_array($words[1], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[1]);
+                            if(in_array($words[1], $subjects_xtalk)) $found_subject = new Subject($words[1]);
                         }
                     }
                 }
@@ -179,11 +177,11 @@ class MessageAnalyzer{
             if(isset($words[1])){
                 $verb_found = false;
                 foreach($verbs as $verb)
-                    if($words[1] == $verb[1]) $verb_found = true;
+                    if($words[1] == $verb->getText()) $verb_found = true;
                 if($verb_found){
                     foreach($subjects as $line){
                         $subjects_xtalk = explode(' ', $line);
-                        if(in_array($words[0], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[0]);
+                        if(in_array($words[0], $subjects_xtalk)) $found_subject = new Subject($words[0]);
                     }
                 }
             }
@@ -192,11 +190,11 @@ class MessageAnalyzer{
             if(isset($words[1])){
                 $verb_found = false;
                 foreach($verbs as $verb)
-                    if($words[0] == $verb[1]) $verb_found = true;
+                    if($words[0] == $verb->getText()) $verb_found = true;
                 if($verb_found){
                     foreach($subjects as $line){
                         $subjects_xtalk = explode(' ', $line);
-                        if(in_array($words[1], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[1]);
+                        if(in_array($words[1], $subjects_xtalk)) $found_subject = new Subject($words[1]);
                     }
                 }
             }
@@ -204,22 +202,22 @@ class MessageAnalyzer{
             //Testing pattern 'SUBJECT * VERB'
             foreach($subjects as $line){
                 $subjects_xtalk = explode(' ', $line);
-                if(in_array($words[0], $subjects_xtalk)) $found_subject[0] = array($subjects_xtalk[0], $words[0]);
+                if(in_array($words[0], $subjects_xtalk)) $found_subject = new Subject($words[0]);
             }
 
         }
 
-        if(count($found_subject) == 0) $found_subject[0] = array('OTHER', 'OTHER');
+        if(count($found_subject) == 0) $found_subject = new Subject('OTHER');
 
         return $found_subject;
     }
 
     public function getTokenTalk(){
         $token_talk = '';
-        $subject = $this->getSubject()[0][0];
+        $subject = $this->getSubject()->getTokenTalk();
         $negation = $this->getNegation();
         $last_verb_index = count($this->getVerbs());
-        if($last_verb_index > 0) $last_verb = $this->getVerbs()[$last_verb_index - 1][0];
+        if($last_verb_index > 0) $last_verb = $this->getVerbs()[$last_verb_index - 1]->getInfinitive();
         else $last_verb = '';
         $question = $this->getQuestion();
         $residual = $this->getResidual();
@@ -240,7 +238,7 @@ class MessageAnalyzer{
             if($word != ''){
                 foreach($conjugated_verbs as $conjugated_verb){
                     $conjugations = explode(' ', $conjugated_verb);
-                    if(in_array($word, $conjugations)) $verbs[] = array($conjugations[0], $word);
+                    if(in_array($word, $conjugations)) $verbs[] = new Verb($word, $conjugations[0]);
                 }
             }
         }

@@ -14,7 +14,7 @@ class Residual{
         $this->setText($text);
     }
 
-    public function getScore(){
+    public function getTokenTalk(){
         $known_adjectives = file(DATA_ADJECTIVES, FILE_IGNORE_NEW_LINES);
         $message_analyzer = new MessageAnalyzer($this->text);
         $adjectives = $message_analyzer->getAdjectives();
@@ -41,7 +41,15 @@ class Residual{
     }
 
     public function setText($text){
-        if(is_string($text)) $this->text = $text;
+        if(is_string($text)){
+            $this->text = '';
+            $words = explode(' ', $text);
+            $tmp_text = array();
+            foreach($words as $word){
+                if($word != '?') $tmp_text[] = $word;
+            }
+            $this->text = implode(' ', $tmp_text);
+        }
         else $this->text = '';
     }
 

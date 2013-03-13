@@ -23,7 +23,6 @@ class Subject{
     public function setText($text){
         if(is_string($text)) $this->text = $text;
         else $this->text = '';
-        echo $this->text.'<br />'.'<br />';
     }
 
 }

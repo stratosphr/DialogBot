@@ -12,19 +12,29 @@ class MessageAnalyzer{
 
     public function __toString(){
         $to_string = 'verbs:';
-        foreach($this->getVerbs() as $verb) $to_string .= ' '.$verb->getInfinitive().' => '.$verb->getText().' |';
+        foreach($this->getVerbs() as $verb) $to_string .= ' '.$verb->getTokenTalk().' => '.$verb->getText().' |';
         $to_string .= '#';
         $to_string .= 'subject:';
         $subject = $this->getSubject();
-        $to_string .= ' '.$subject->getTokenTalk().' => '.$subject->getText().' |';
-        $to_string .= '#';
-        $to_string .= 'question: '.$this->getQuestion().' #';
-        $to_string .= 'negation: '.$this->getNegation().' #';
-        $to_string .= 'adjectives: ';
+        $to_string .= $subject->getTokenTalk().' => '.$subject->getText().'#';
+        $to_string .= 'question:'.$this->getQuestion().'#';
+        $to_string .= 'negation:'.$this->getNegation().' #';
+        $to_string .= 'adjectives:';
         foreach($this->getAdjectives() as $adjective) $to_string .= ' '.$adjective.' |';
         $to_string .= '#';
-        $to_string .= 'residual: ' . $this->getResidual()->getTokenTalk() . '#';
+        $to_string .= 'residual:' . $this->getResidual()->getTokenTalk() . '#';
         return $to_string;
+    }
+
+    public function getNouns(){
+        $words = explode(' ', $this->message);
+        $determiners = file(DATA_DETERMINERS, FILE_IGNORE_NEW_LINES);
+        $nouns = array();
+
+        foreach($words as $key=>$word)
+            if(in_array($word, $determiners) && isset($words[$key + 1])) $nouns[] = $words[$key + 1];
+
+        return $nouns;
     }
 
     public function getAdjectives(){
@@ -47,7 +57,7 @@ class MessageAnalyzer{
         $negative_words = file(DATA_NEGATIVE_WORDS, FILE_IGNORE_NEW_LINES);
         $verbs = $this->getVerbs();
         $words = explode(' ', $this->message);
-        $negation = 'NOT_NEGATION';
+        $negation = '';
         $index_DISCORDANTIAL = -1;
         $index_FORCLUSIVE = -1;
         $index_VERB = -1;
@@ -220,8 +230,8 @@ class MessageAnalyzer{
         if($last_verb_index > 0) $last_verb = $this->getVerbs()[$last_verb_index - 1]->getInfinitive();
         else $last_verb = '';
         $question = $this->getQuestion();
-        $residual = $this->getResidual();
-        $token_talk .= $question . ' ' . $subject . ' ' . $negation . ' ' . $last_verb . ' ' . $residual;
+        if($negation != '') $token_talk .= $question . ' ' . $subject . ' ' . $negation . ' ' . $last_verb;
+        else $token_talk .= $question . ' ' . $subject . ' ' . $last_verb;
 
         return $token_talk;
     }
@@ -243,6 +253,20 @@ class MessageAnalyzer{
             }
         }
         return $verbs;
+    }
+
+    // States wether the message is introducing a user or not
+    public function isPresentation(){
+        $token_talk = $this->getTokenTalk();
+        if(
+            startsWith('NOT_QUESTION USER appeler', $token_talk) ||
+            startsWith('NOT_QUESTION USER être', $token_talk) ||
+            startsWith('NOT_QUESTION USER prénommer', $token_talk) ||
+            startsWith('NOT_QUESTION TIERS', $token_talk)
+        ){
+            return true;
+        }
+        return false;
     }
 
     public function setMessage($message){
@@ -273,7 +297,6 @@ class MessageAnalyzer{
         $message = str_replace('est ce que', '__est_ce_que__', $message);
         $message = str_replace('aujourd hui', 'aujourd\'hui', $message);
         $message = str_replace('parce que', 'puisque', $message);
-        echo 'Normalized : #'.$message.'#<br />';
         return $message;
     }
 
@@ -313,7 +336,6 @@ class MessageAnalyzer{
             }
         }
         $spellchecked_message = implode(' ', $correction);
-        echo 'Correction : '.$message.' => '.$spellchecked_message.'<br />';
         return $spellchecked_message;
     }
 

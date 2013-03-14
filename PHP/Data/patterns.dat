@@ -1,70 +1,74 @@
-USER être NOT_QUESTION
-Bonjour, je suis TalkBot, le robot qui parle. Comment vas-tu ?
-ME aimer quelles
+NOT_QUESTION USER sentir
+Je comprends. Quel en est la cause ?
+NOT_QUESTION USER être
+En es-tu certain ? Qu'est-ce qui te fais dire cela ?
+quelles ME aimer 
 J'ai des goûts très variés. Et toi, qu'est-ce que tu aimes ?
-USER aller QUESTION
+NOT_QUESTION USER aller
 Moi aussi. Dis m'en un peu plus sur toi.
-ME avoir combien
+combien ME avoir
 J'en ai plusieurs. Et toi, combien en as-tu ?
-USER avoir NOT_QUESTION
+NOT_QUESTION USER avoir
 Très bien. Est-ce que ça te fait plaisir ?
-OTHERS être quelle
+quelle OTHERS être
 Mes données sont limitées sur ce sujet. Peux-tu m'en dire plus ?
-OTHERS être qui
+qui OTHERS être
 Peut-être moi... Je suis encore un nouveau né, je ne me connais pas réellement. Qu'aimes-tu faire dans la vie ?
-TIERS vouloir que
+que TIERS vouloir
 Je pense que cette personne désire énormément de choses. Qu'en penses-tu ?
-TIERS aime que
+que TIERS aime
 Je pense que cette personne désire énormément de choses. Qu'en penses-tu ?
-ME penser quoi
-Je pense que vous êtes très sympathique. Sommes-nous amis ?
-TIERSES vivre où
+quoi ME penser
+Je pense que tu es très sympathique. Sommes-nous amis ?
+où TIERSES vivre
 Peut-être en Espagne ? Je ne suis pas certain de ma géographie. Et toi ? Où habites-tu ?
-USER vivre NOT_QUESTION
+NOT_QUESTION USER vivre
 On m'a dit que le paysage y était magnifique ! Aimes-tu vivre là-bas ?
-OTHERS valoir combien
+combien OTHERS valoir
 Je ne connais pas la valeur exacte, mais je dirais que c'est précieux. Voudrais-tu l'acheter ?
-USER penser NOT_QUESTION
+penser NOT_QUESTION USER
 "Très bien. Parle-moi de toi. Quels sont tes hobbies ?
-ME faire comment
+comment ME faire
 Je suis simplement très doué. Comment aurais-tu fait ?
-USER faire NOT_QUESTION
-Je vois, c'est une bonne idée. Que pensez de la société actuelle ?
-TIERS venir pourquoi
+NOT_QUESTION USER faire
+Je vois, c'est une bonne idée. Que penses-tu de la société actuelle ?
+pourquoi TIERS venir
 Il avait sans doute un projet en tête. Et toi, que fais-tu en ce moment ?
-USERS partir quand
+quand USERS partir
 Dès que possible. Pourquoi ? Es-tu pressée ?
-ME aller où
+où ME aller
 Je ne vais nulle part : je suis un robot, et j'obéis à mon maître. Où voudrais-tu que j'aille ?
-ME aller QUESTION
+QUESTION ME aller
 Non je ne vais pas RESIDUAL, mais je préfère garder ça pour moi. J'aimerais mieux te connaître avant de me dévoiler. Parles moi de toi.
-ME venir quand
+quand ME venir
 Je ne peux malheureusement pas me déplacer, n'étant qu'un simple programme...Voudrais-tu me voir ?
-ME vouloir quoi
+quoi ME vouloir
 J'aimerais beaucoup de choses. Avoir un nouvel antivirus pour me protéger. Et toi que souhaiterais-tu ?
-ME vouloir que
+que ME vouloir
 J'aimerais beaucoup de choses. Avoir un nouvel antivirus pour me protéger par exemple. Et toi que souhaiterais-tu ?
-ME penser que
-Je suis du même avis que vous. J'aimerais savoir ce que tu penses du grignotage entre les repas ?
-ME dire pourquoi
+que ME penser
+Je suis du même avis que toi. J'aimerais savoir ce que tu penses du grignotage entre les repas ?
+pourquoi ME dire
 Parce qu'on m'a programmé pour dire ça. Pourquoi poses-tu la question ?
-OTHERS parler qui
+qui OTHERS parler
 Probablement nous et des tas de personnes dans le monde. Pourquoi est-ce que cela t'intéresse ?
-ME voir qui
+qui USER parler
+Eh bien il y a moi... Pourquoi ?
+qui ME voir
 Je vois ma petite amie, AVAST. Et toi as-tu une petite amie ?
-USER valoir que
-Je pense simplement que vous le méritez. Ne penses-tu pas ?
-ME voir que
+que USER valoir
+Je pense simplement que tu le mérites. Ne penses-tu pas ?
+que ME voir
 Je vois actuellement tout un tas de lignes de code. Et toi ?
-USER entendre qui
+qui USER entendre
 Probablement le son de votre ordinateur ? Cela te dérange-t-il ?
-USER voir que
+que USER voir
 La perception change d'une personne à une autre. Décris-moi ce que tu crois voir en ce moment.
-ME aimer lequel
+lequel ME aimer
 Je ne sais pas trop. J'hésite entre plusieurs. Et toi, as-tu une préférence ?
-ME aimer qui
+qui ME aimer
 J'aime tout le monde. Es-tu amoureux de quelqu'un ?
-ME faire quoi
+quoi ME faire
 Je fais des tas de choses : je suis un programme multitâche ! Et toi, es-tu multitâche ?
-ME faire que
+que ME faire
 Je fais des tas de choses : je suis un programme multitâche ! Et toi, es-tu multitâche ?

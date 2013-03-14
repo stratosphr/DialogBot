@@ -40,7 +40,6 @@ $(document).ready(function(){
                 message : new_message, 
                 use_spellchecker : use_spellchecker
             }, function(data){
-                alert(data);
                 var analyze = data.split("#");
                 var answer;
                 var question;
@@ -98,6 +97,8 @@ $(document).ready(function(){
     $("#input_reset_bot").click(function(event){
         $.get("PHP/functions.php", {
             reset_bot : "true"
+        }).done(function(){
+            location.reload();
         });
     });
 

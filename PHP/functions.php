@@ -7,7 +7,8 @@ include_once('Includes/all_includes.php');
  */
 
 // Reset bot
-if(isset($_GET['reset']) && $_GET['reset'] == 'true'){
+if(isset($_GET['reset_bot']) && $_GET['reset_bot'] == 'true'){
+    chmod(DATA_SAVED, 0777);
     unlink(DATA_SAVED);
 }
 

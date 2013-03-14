@@ -32,19 +32,19 @@
 						<input id="input_add_words" type="submit" value="Add words"/>
 				</div>
 				<div class="field">
-						<input checked="checked" id="input_display_verbs" type="checkbox" value="display_verbs"/>
+						<input id="input_display_verbs" type="checkbox" value="display_verbs"/>
 						<label for="input_display_verbs">Display verbs data</label>
 				</div>
 				<div class="field">
-						<input checked="checked" id="input_display_subjects" type="checkbox" value="display_subjects"/>
+						<input id="input_display_subjects" type="checkbox" value="display_subjects"/>
 						<label for="input_display_subjects">Display subjects data</label>
 				</div>
 				<div class="field">
-						<input checked="checked" id="input_display_questions" type="checkbox" value="display_questions"/>
+						<input id="input_display_questions" type="checkbox" value="display_questions"/>
 						<label for="input_display_questions">Display questions data</label>
 				</div>
 				<div class="field">
-						<input checked="checked" id="input_display_negations" type="checkbox" value="display_negations"/>
+						<input id="input_display_negations" type="checkbox" value="display_negations"/>
 						<label for="input_display_negations">Display negations data</label>
 				</div>
 		</fieldset>
